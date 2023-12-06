@@ -46,8 +46,8 @@ def snowball_payment_timeline(
     total_rows = len(custom_payment_timeline)
     
     first_payment = (
-        custom_payment_timeline.iloc[0:1]
-        .filter(like="min_payment").sum(axis=1)[0]
+        custom_payment_timeline.iloc[1]
+        .filter(like="min_payment").sum()
     )
 
     for priority_loan in organized_loans:
@@ -55,18 +55,20 @@ def snowball_payment_timeline(
 
         while extra_payment_idx < total_rows:
             tmp_balance = (
-                custom_payment_timeline[priority_loan]["balance"][extra_payment_idx-1]
+                custom_payment_timeline.loc[
+                    :, (priority_loan, "balance")
+                ].iloc[extra_payment_idx-1]
             )
 
-            last_record = custom_payment_timeline.iloc[[extra_payment_idx]].copy()
+            last_record = custom_payment_timeline.iloc[extra_payment_idx]
             
             extra_payment = (
-                first_payment - last_record.filter(like="min_payment").sum(axis=1)[0]
+                first_payment - last_record.filter(like="min_payment").sum()
             )
 
             total_payment = (
-                    last_record[(priority_loan), "payment"] + extra_payment
-            )[0]
+                    last_record[(priority_loan, "payment")] + extra_payment
+            )
 
             min_payment = last_record[(priority_loan, "min_payment")] + extra_payment
 
@@ -74,10 +76,15 @@ def snowball_payment_timeline(
                 total_payment, extra_payment,  tmp_balance, min_payment = 0, 0, 0, 0
 
             tmp_balance -= total_payment
-            last_record[(priority_loan, "payment")] = total_payment
-            last_record[(priority_loan, "extra_payment")] = extra_payment
-            last_record[(priority_loan, "balance")] = (tmp_balance if tmp_balance > 0 else 0)
-            last_record[(priority_loan, "min_payment")] = min_payment
+
+            update_record = {
+                "payment": total_payment,
+                "extra_payment": extra_payment,
+                "balance": max(0, tmp_balance),
+                "min_payment": min_payment,
+            }
+            last_record[priority_loan].update(update_record)
+
             custom_payment_timeline.iloc[extra_payment_idx] = last_record
             extra_payment_idx += 1
     
