@@ -1,0 +1,10 @@
+name,balance,min_payment,interest_rate
+"loan_a",5000,150,.14
+"loan_b",1200,300,.899
+"loan_c",10000,220,0.0
+
+
+#name: Loan name
+#balance: Current loan balance
+#min_payment: Minimum monthly payment
+#interest_rate: Annual percentage interest rate (apr) (ex. 20% apr = .2)
