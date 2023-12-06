@@ -163,7 +163,7 @@ def preview_plan(
     monthly_payment = loans_df["min_payment"].sum()
 
     print(
-        f"Original total debt: {total_balance: .2f}"
+        f"Original total debt: {total_balance: .2f}\n"
         f"Total monthly payments: {monthly_payment}"
     )
     print(f"{sort_col} view will prioritize loans in the following order:")

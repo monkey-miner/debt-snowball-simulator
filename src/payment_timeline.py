@@ -7,7 +7,7 @@ def base_payment_timelines(loans):
     payment_dfs = {}
     for loan in loans:
         tmp_df = loan.base_payment_timeline
-        tmp_df["extra_payment"] = 0
+        tmp_df["extra_payment"] = 0.0
         payment_dfs[loan.name] = tmp_df
     return combine_loan_dfs(payment_dfs)
 
@@ -62,15 +62,17 @@ def snowball_payment_timeline(
 
             last_record = custom_payment_timeline.iloc[extra_payment_idx]
             
-            extra_payment = (
-                first_payment - last_record.filter(like="min_payment").sum()
+            extra_payment = round(
+                first_payment - last_record.filter(like="min_payment").sum(), 2
             )
 
-            total_payment = (
-                    last_record[(priority_loan, "payment")] + extra_payment
+            total_payment = round(
+                    last_record[(priority_loan, "payment")] + extra_payment, 2
             )
 
-            min_payment = last_record[(priority_loan, "min_payment")] + extra_payment
+            min_payment = round(
+                last_record[(priority_loan, "min_payment")] + extra_payment, 2
+            )
 
             if not (tmp_balance > 0):
                 total_payment, extra_payment,  tmp_balance, min_payment = 0, 0, 0, 0

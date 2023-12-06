@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+import numpy as np
 import pandas as pd
 
 
@@ -90,7 +91,7 @@ class Loan():
         return df
     
     def add_extra_payment(self, extra_payment: float):
-        self.min_payment += extra_payment
+        self.min_payment += float(extra_payment)
         self.base_payment_timeline = self.get_payment_timeline()
         self.payment_months = len(self.base_payment_timeline)
         self.to_dict = {
