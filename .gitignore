@@ -1,5 +1,5 @@
 *.DS_Store
 *personal_loan_data**
-/*.xlsx
+*.xlsx
 **pycache**
 *.pyc
